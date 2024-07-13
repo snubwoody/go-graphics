@@ -2,47 +2,15 @@ package main
 
 import "github.com/go-gl/gl/v4.1-core/gl"
 
-type Drawable interface {
-	render()
-	renderWithOffset(x int,y int)
-}
-
-type Row struct {
-	x        int
-	y        int
-	width    int
-	height   int
-	spacing  int
-	color    Color
-	children []Drawable
-}
-
-func (row Row) render() {
-	newPos := 0
-	for _, child := range row.children {
-		drawRect(
-			child.x
-		)
-	}
-	drawRect(
-		row.x,
-		row.y,
-		row.width,
-		row.height,
-		row.color.normalize(),
-	)
-}
-
-func (row Row) renderWithOffset(x uint, y uint){
-
-}
-
 type Frame struct {
 	x        int
 	y        int
 	width    int
 	height   int
+	xSpacing int
+	ySpacing int
 	color    Color
+	children []*Frame
 }
 
 func (frame Frame) render() {
@@ -53,13 +21,33 @@ func (frame Frame) render() {
 		frame.height,
 		frame.color.normalize(),
 	)
+
+	xOffset := frame.x
+	yOffset := frame.y
+
+	for _, child := range frame.children {
+		child.translate(xOffset, yOffset)
+		xOffset += child.width + frame.xSpacing
+		yOffset += child.height + frame.ySpacing
+		child.render()
+	}
+
 }
 
-func (frame Frame) renderWithOffset(x int, y int){
+func (frame *Frame) position() (int, int) {
+	return 0, 0
+}
 
+func (frame *Frame) translate(x int, y int) {
+	frame.x += x
+	frame.y += y
 }
 
 type Color [3]uint
+
+func RGB(r uint, g uint, b uint) Color {
+	return [3]uint{r, g, b}
+}
 
 func (color Color) normalize() [3]float32 {
 	return [3]float32{
@@ -105,25 +93,17 @@ func drawRect(x int, y int, width int, height int, colour [3]float32) {
 
 	vertices := []float32{
 		//Left triangle
-		xStartPos, yEndPos, 0.0, colour[0], colour[1], colour[2], //Top left
-		xStartPos, yStartPos, 0.0, colour[0], colour[1], colour[2], //Bottom left
-		xEndPos, yStartPos, 0.0, colour[0], colour[1], colour[2], //Bottom right
+		xStartPos, yEndPos, colour[0], colour[1], colour[2], //Top left
+		xStartPos, yStartPos, colour[0], colour[1], colour[2], //Bottom left
+		xEndPos, yStartPos, colour[0], colour[1], colour[2], //Bottom right
 
 		//Right triangle
-		xStartPos, yEndPos, 0.0, colour[0], colour[1], colour[2], //Top left
-		xEndPos, yEndPos, 0.0, colour[0], colour[1], colour[2], //Top right
-		xEndPos, yStartPos, 0.0, colour[0], colour[1], colour[2], //Bottom right
+		xStartPos, yEndPos, colour[0], colour[1], colour[2], //Top left
+		xEndPos, yEndPos, colour[0], colour[1], colour[2], //Top right
+		xEndPos, yStartPos, colour[0], colour[1], colour[2], //Bottom right
 	}
 
 	vao := makeVAO(vertices)
 	gl.BindVertexArray(vao)
 	gl.DrawArrays(gl.TRIANGLES, 0, int32(len(vertices)/3))
-}
-
-func RGB(r int, g int, b int) [3]float32 {
-	red := Map(float32(r), 0, 255, 0, 1)
-	green := Map(float32(g), 0, 255, 0, 1)
-	blue := Map(float32(b), 0, 255, 0, 1)
-
-	return [3]float32{red, green, blue}
 }
