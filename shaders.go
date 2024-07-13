@@ -57,3 +57,11 @@ func MakeEbo(indices []uint32) uint32 {
 	gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, len(indices)*4, gl.Ptr(indices), gl.STATIC_DRAW)
 	return ebo
 }
+
+func Map(value float32, inMin float32, inMax float32, outMin float32, outMax float32) float32 {
+	scale := (outMax - outMin) / (inMax - inMin)
+	offset := inMin*((outMax-outMin)/(inMax-inMin)) + outMin
+	output := value*scale + offset
+
+	return output
+}
