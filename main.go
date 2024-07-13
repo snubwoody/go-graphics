@@ -34,30 +34,12 @@ func draw(window *glfw.Window, program uint32) {
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 	gl.UseProgram(program)
 
-	rect := Frame{
-		0, 0,
-		100, 100,
-		0, 0,
-		Color{25, 205, 55},
-		nil,
-	}
+	rect := NewRow(0, 0, 250, 100, 10, RGB(0, 255, 100))
+	rect3 := NewRow(0, 0, 250, 100, 10, RGB(0, 255, 100))
+	rect4 := NewRow(0, 0, 250, 100, 10, RGB(0, 255, 100))
+	rect2 := NewRow(0, 0, 500, 100, 10, RGB(0, 255, 100), rect3, rect4)
 
-	rect2 := Frame{
-		0, 0,
-		100, 100,
-		0, 0,
-		Color{5, 25, 25},
-		nil,
-	}
-
-	box := Frame{
-		50, 50,
-		250, 1000,
-		0, 0,
-		RGB(255, 255, 255),
-		[]*Frame{&rect, &rect2},
-	}
-
+	box := NewColumn(0, 0, 250, 1000, 10, RGB(255, 255, 255), rect, rect2)
 	box.render()
 
 	glfw.PollEvents()

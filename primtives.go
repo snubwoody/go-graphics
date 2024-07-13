@@ -3,14 +3,12 @@ package main
 import "github.com/go-gl/gl/v4.1-core/gl"
 
 type Frame struct {
-	x        int
-	y        int
-	width    int
-	height   int
-	xSpacing int
-	ySpacing int
-	color    Color
-	children []*Frame
+	x, y                   int
+	width, height          int
+	xSpacing, ySpacing     int
+	xDirection, yDirection bool
+	color                  Color
+	children               []*Frame
 }
 
 func (frame Frame) render() {
@@ -26,7 +24,13 @@ func (frame Frame) render() {
 	yOffset := frame.y
 
 	for _, child := range frame.children {
-		child.translate(xOffset, yOffset)
+		if frame.xDirection {
+			child.translate(xOffset, 0)
+		}
+
+		if frame.yDirection {
+			child.translate(0, yOffset)
+		}
 		xOffset += child.width + frame.xSpacing
 		yOffset += child.height + frame.ySpacing
 		child.render()
@@ -55,6 +59,14 @@ func (color Color) normalize() [3]float32 {
 		Map(float32(color[1]), 0, 255, 0, 1),
 		Map(float32(color[2]), 0, 255, 0, 1),
 	}
+}
+
+func NewRow(x, y, width, height, spacing int, color Color, children ...*Frame) *Frame {
+	return &Frame{x, y, width, height, spacing, 0, true, false, color, children}
+}
+
+func NewColumn(x, y, width, height, spacing int, color Color, children ...*Frame) *Frame {
+	return &Frame{x, y, width, height, 0, spacing, false, true, color, children}
 }
 
 //TODO refactor
