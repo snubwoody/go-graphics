@@ -9,12 +9,11 @@ import (
 
 const width, height = 1000, 1000
 
-func init() {
-	runtime.LockOSThread()
-}
-
 func main() {
+	runtime.LockOSThread()
+
 	err := glfw.Init()
+
 	if err != nil {
 		panic(err)
 	}
