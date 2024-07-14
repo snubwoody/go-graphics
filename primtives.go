@@ -1,6 +1,10 @@
 package main
 
-import "github.com/go-gl/gl/v4.1-core/gl"
+import (
+	"math"
+
+	"github.com/go-gl/gl/v4.1-core/gl"
+)
 
 type Frame struct {
 	x, y                   int
@@ -47,18 +51,28 @@ func (frame *Frame) translate(x int, y int) {
 	frame.y += y
 }
 
-type Color [3]uint
+type Color [4]uint
 
-func RGB(r uint, g uint, b uint) Color {
-	return [3]uint{r, g, b}
-}
-
-func (color Color) normalize() [3]float32 {
-	return [3]float32{
+func (color Color) normalize() [4]float32 {
+	return [4]float32{
 		Map(float32(color[0]), 0, 255, 0, 1),
 		Map(float32(color[1]), 0, 255, 0, 1),
 		Map(float32(color[2]), 0, 255, 0, 1),
+		Map(float32(color[3]), 0, 100, 0, 1),
 	}
+}
+
+func RGB(r uint, g uint, b uint) Color {
+	return [4]uint{r, g, b, 100}
+}
+
+func RGBA(r uint, g uint, b uint, a uint) Color {
+	return [4]uint{r, g, b, a}
+}
+
+// TODO
+func Hex(code string) {
+
 }
 
 func NewRow(x, y, width, height, spacing int, color Color, children ...*Frame) *Frame {
@@ -69,7 +83,7 @@ func NewColumn(x, y, width, height, spacing int, color Color, children ...*Frame
 	return &Frame{x, y, width, height, 0, spacing, false, true, color, children}
 }
 
-//TODO refactor
+// TODO refactor
 func drawTriangle(x int, y int, width int, height int) {
 	_x := Map(float32(x), 0, 1000, -1, 1)
 	_y := Map(float32(y), 0, 1000, -1, 1)
@@ -97,7 +111,7 @@ func drawTriangle(x int, y int, width int, height int) {
 	gl.DrawArrays(gl.TRIANGLES, 0, int32(len(vertices)/3))
 }
 
-func drawRect(x int, y int, width int, height int, colour [3]float32) {
+func drawRect(x int, y int, width int, height int, colour [4]float32) {
 	xStartPos := Map(float32(x), 0, 1000, -1, 1)
 	xEndPos := Map(float32(x+width), 0, 1000, -1, 1)
 	yStartPos := Map(float32(y), 0, 1000, 1, -1)
@@ -105,17 +119,39 @@ func drawRect(x int, y int, width int, height int, colour [3]float32) {
 
 	vertices := []float32{
 		//Left triangle
-		xStartPos, yEndPos, colour[0], colour[1], colour[2], //Top left
-		xStartPos, yStartPos, colour[0], colour[1], colour[2], //Bottom left
-		xEndPos, yStartPos, colour[0], colour[1], colour[2], //Bottom right
+		xStartPos, yEndPos, colour[0], colour[1], colour[2], colour[3], //Top left
+		xStartPos, yStartPos, colour[0], colour[1], colour[2], colour[3], //Bottom left
+		xEndPos, yStartPos, colour[0], colour[1], colour[2], colour[3], //Bottom right
 
 		//Right triangle
-		xStartPos, yEndPos, colour[0], colour[1], colour[2], //Top left
-		xEndPos, yEndPos, colour[0], colour[1], colour[2], //Top right
-		xEndPos, yStartPos, colour[0], colour[1], colour[2], //Bottom right
+		xStartPos, yEndPos, colour[0], colour[1], colour[2], colour[3], //Top left
+		xEndPos, yEndPos, colour[0], colour[1], colour[2], colour[3], //Top right
+		xEndPos, yStartPos, colour[0], colour[1], colour[2], colour[3], //Bottom right
 	}
 
 	vao := makeVAO(vertices)
 	gl.BindVertexArray(vao)
 	gl.DrawArrays(gl.TRIANGLES, 0, int32(len(vertices)/3))
+}
+
+func drawCircle(center [2]int, radius int, colour [4]float32) {
+
+	centerPoint := Vertex(center[0], center[1])
+	steps := 20
+
+	for i := range steps {
+
+	}
+
+	points := []float32{}
+	math.Sin(0)
+	vao := makeVAO(points)
+	gl.BindVertexArray(vao)
+	gl.DrawArrays(gl.TRIANGLES, 0, int32(len(points)/3))
+}
+
+func Vertex(x int, y int) [2]float32 {
+	_x := Map(float32(x), 0, 1000, -1, 1)
+	_y := Map(float32(y), 0, 1000, 1, -1)
+	return [2]float32{_x, _y}
 }

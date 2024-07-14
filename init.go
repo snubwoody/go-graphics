@@ -55,6 +55,9 @@ func InitOpenGL() uint32 {
 	version := gl.GoStr(gl.GetString(gl.VERSION))
 	log.Println("OpenGL version", version)
 
+	gl.Enable(gl.BLEND)
+	gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+
 	program := gl.CreateProgram()
 	gl.AttachShader(program, vertexShader)
 	gl.AttachShader(program, fragmentShader)
