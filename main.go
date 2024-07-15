@@ -7,7 +7,8 @@ import (
 	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
-const width, height = 1000, 1000
+var width, height = 1000, 1000
+var window *glfw.Window
 
 func main() {
 	runtime.LockOSThread()
@@ -20,11 +21,14 @@ func main() {
 
 	defer glfw.Terminate()
 
-	window := InitGlfw(width, height, "Window")
+	window = InitGlfw(width, height, "Window")
 	program := InitOpenGL()
+
+	window.SetFramebufferSizeCallback(updateViewport)
 
 	for !window.ShouldClose() {
 		draw(window, program)
+
 	}
 
 }
@@ -33,14 +37,12 @@ func draw(window *glfw.Window, program uint32) {
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 	gl.UseProgram(program)
 
-	rect := NewRow(0, 0, 250, 100, 10, RGBA(0, 250, 100, 10))
-	rect3 := NewRow(0, 0, 250, 100, 10, RGB(0, 255, 100))
-	rect4 := NewRow(0, 0, 250, 100, 10, RGBA(0, 25, 100, 50))
-	rect2 := NewRow(0, 0, 500, 100, 10, RGB(0, 255, 100), rect3, rect4)
-
-	box := NewColumn(0, 0, 250, 1000, 10, RGB(255, 255, 255), rect, rect2)
-	box.render()
+	drawRect(0, 0, 20, 60, White)
 
 	glfw.PollEvents()
 	window.SwapBuffers()
+}
+
+func updateViewport(window *glfw.Window, width int, height int) {
+	gl.Viewport(0, 0, int32(width), int32(height))
 }

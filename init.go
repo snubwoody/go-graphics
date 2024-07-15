@@ -10,7 +10,7 @@ import (
 )
 
 func InitGlfw(width int, height int, title string) *glfw.Window {
-	glfw.WindowHint(glfw.Resizable, glfw.False)
+	glfw.WindowHint(glfw.Resizable, glfw.True)
 	glfw.WindowHint(glfw.ContextVersionMajor, 4)
 	glfw.WindowHint(glfw.ContextVersionMinor, 1)
 	glfw.WindowHint(glfw.OpenGLProfile, glfw.OpenGLCoreProfile)
@@ -51,6 +51,8 @@ func InitOpenGL() uint32 {
 	if err != nil {
 		panic(err)
 	}
+
+	gl.Viewport(0, 0, int32(width), int32(height))
 
 	version := gl.GoStr(gl.GetString(gl.VERSION))
 	log.Println("OpenGL version", version)
