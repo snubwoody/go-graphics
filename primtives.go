@@ -12,47 +12,6 @@ var (
 	Blue  = []float32{0, 0, 1, 1}
 )
 
-type Frame struct {
-	x, y                   int
-	width, height          int
-	xSpacing, ySpacing     int
-	xDirection, yDirection bool
-	color                  []float32
-	children               []*Frame
-}
-
-func (frame Frame) render() {
-	drawRect(
-		frame.x,
-		frame.y,
-		frame.width,
-		frame.height,
-		frame.color,
-	)
-
-	xOffset := frame.x
-	yOffset := frame.y
-
-	for _, child := range frame.children {
-		if frame.xDirection {
-			child.translate(xOffset, 0)
-		}
-
-		if frame.yDirection {
-			child.translate(0, yOffset)
-		}
-		xOffset += child.width + frame.xSpacing
-		yOffset += child.height + frame.ySpacing
-		child.render()
-	}
-
-}
-
-func (frame *Frame) translate(x int, y int) {
-	frame.x += x
-	frame.y += y
-}
-
 func RGB(r uint, g uint, b uint) []float32 {
 	return []float32{
 		Map(float32(r), 0, 255, 0, 1),
@@ -74,14 +33,6 @@ func RGBA(r uint, g uint, b uint, a uint) []float32 {
 // TODO
 func Hex(code string) {
 
-}
-
-func NewRow(x, y, width, height, spacing int, color []float32, children ...*Frame) *Frame {
-	return &Frame{x, y, width, height, spacing, 0, true, false, color, children}
-}
-
-func NewColumn(x, y, width, height, spacing int, color []float32, children ...*Frame) *Frame {
-	return &Frame{x, y, width, height, 0, spacing, false, true, color, children}
 }
 
 // TODO refactor
@@ -134,14 +85,4 @@ func drawRect(x int, y int, width int, height int, colour []float32) {
 	vao := makeVAO(vertices)
 	gl.BindVertexArray(vao)
 	gl.DrawArrays(gl.TRIANGLES, 0, int32(len(vertices)/3))
-}
-
-func Vertex(x int, y int, colour []float32) []float32 {
-	_x := Map(float32(x), 0, 1000, -1, 1)
-	_y := Map(float32(y), 0, 1000, 1, -1)
-	return []float32{_x, _y, colour[0], colour[1], colour[2], colour[3]}
-}
-
-func getScreenBounds() {
-
 }

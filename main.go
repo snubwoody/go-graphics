@@ -35,9 +35,36 @@ func main() {
 
 func draw(window *glfw.Window, program uint32) {
 	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+	gl.ClearColor(1, 1, 1, 1)
 	gl.UseProgram(program)
 
-	drawRect(0, 0, 20, 60, White)
+	drawRect(0, 0, 20, 60, Blue)
+	drawRect(0, 0, 20, 60, Blue)
+	drawRect(0, 0, 20, 60, Blue)
+	drawRect(0, 0, 20, 60, Blue)
+
+	sidebar := HStack{
+		x: 0, y: 0,
+		width: 500, height: 150,
+		spacing: 20,
+		color:   Black,
+		children: []Widget{
+			VStack{
+				x: 50, y: 0,
+				width: 150, height: 150,
+				spacing: 20,
+				color:   Blue,
+			},
+			HStack{
+				x: 0, y: 0,
+				width: 150, height: 150,
+				spacing: 20,
+				color:   Green,
+			},
+		},
+	}
+
+	sidebar.render()
 
 	glfw.PollEvents()
 	window.SwapBuffers()
