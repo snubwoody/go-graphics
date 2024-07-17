@@ -1,5 +1,6 @@
 package main
 
+// All widgets inherit from this interface
 type Widget interface {
 	render()
 	translate(x int, y int)
@@ -23,22 +24,23 @@ func (stack HStack) render() {
 		stack.color,
 	)
 
-	yOffset := stack.x
+	xOffset := stack.x
 
 	for _, child := range stack.children {
-		child.translate(0, yOffset)
-		_, h := child.size()
-		yOffset += h + stack.spacing
+		child.translate(xOffset, 0)
+		w, _ := child.size()
+		xOffset += w + stack.spacing
 		child.render()
 	}
 }
 
-func (stack HStack) translate(x int, y int) {
-
+func (stack *HStack) translate(x int, y int) {
+	stack.x += x
+	stack.y += y
 }
 
 func (stack HStack) size() (int, int) {
-	return stack.x, stack.y
+	return stack.width, stack.height
 }
 
 type VStack struct {
@@ -58,22 +60,24 @@ func (stack VStack) render() {
 		stack.color,
 	)
 
-	xOffset := stack.x
+	yOffset := stack.x
 
 	for _, child := range stack.children {
-		child.translate(xOffset, 0)
-		w, _ := child.size()
-		xOffset += w + stack.spacing
+		child.translate(0, yOffset)
+		_, h := child.size()
+		yOffset += h + stack.spacing
 		child.render()
 	}
+
 }
 
-func (stack VStack) translate(x int, y int) {
-
+func (stack *VStack) translate(x int, y int) {
+	stack.x += x
+	stack.y += y
 }
 
 func (stack VStack) size() (int, int) {
-	return stack.x, stack.y
+	return stack.width, stack.height
 }
 
 type Frame struct {

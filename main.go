@@ -1,10 +1,12 @@
 package main
 
 import (
+	"os"
 	"runtime"
 
 	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/go-gl/glfw/v3.3/glfw"
+	"github.com/golang/freetype/truetype"
 )
 
 var width, height = 1000, 1000
@@ -12,6 +14,9 @@ var window *glfw.Window
 
 func main() {
 	runtime.LockOSThread()
+
+	font, loadErr := os.ReadFile("fonts/Inter/static/Inter-Medium.ttf")
+	truetype.Parse(font)
 
 	err := glfw.Init()
 
@@ -28,7 +33,6 @@ func main() {
 
 	for !window.ShouldClose() {
 		draw(window, program)
-
 	}
 
 }
@@ -38,24 +42,19 @@ func draw(window *glfw.Window, program uint32) {
 	gl.ClearColor(1, 1, 1, 1)
 	gl.UseProgram(program)
 
-	drawRect(0, 0, 20, 60, Blue)
-	drawRect(0, 0, 20, 60, Blue)
-	drawRect(0, 0, 20, 60, Blue)
-	drawRect(0, 0, 20, 60, Blue)
-
 	sidebar := HStack{
 		x: 0, y: 0,
-		width: 500, height: 150,
+		width: 500, height: 500,
 		spacing: 20,
 		color:   Black,
 		children: []Widget{
-			VStack{
-				x: 50, y: 0,
+			&VStack{
+				x: 0, y: 0,
 				width: 150, height: 150,
 				spacing: 20,
-				color:   Blue,
+				color:   Red,
 			},
-			HStack{
+			&HStack{
 				x: 0, y: 0,
 				width: 150, height: 150,
 				spacing: 20,

@@ -58,6 +58,7 @@ func InitOpenGL() uint32 {
 	log.Println("OpenGL version", version)
 
 	gl.Enable(gl.BLEND)
+	gl.Enable(gl.FRAMEBUFFER_SRGB)
 	gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 
 	program := gl.CreateProgram()
