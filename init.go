@@ -9,7 +9,7 @@ import (
 	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
-func InitGlfw(width int, height int, title string) *glfw.Window {
+func CreateWindow(width int, height int, title string) *glfw.Window {
 	glfw.WindowHint(glfw.Resizable, glfw.True)
 	glfw.WindowHint(glfw.ContextVersionMajor, 4)
 	glfw.WindowHint(glfw.ContextVersionMinor, 1)
@@ -32,12 +32,12 @@ func InitOpenGL() uint32 {
 		panic(err)
 	}
 
-	frag, err := os.ReadFile("triangle.frag")
+	frag, err := os.ReadFile("shaders/triangle.frag")
 	if err != nil {
 		panic(err)
 	}
 
-	vert, err := os.ReadFile("triangle.vert")
+	vert, err := os.ReadFile("shaders/triangle.vert")
 	if err != nil {
 		panic(err)
 	}
