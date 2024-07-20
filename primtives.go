@@ -1,10 +1,12 @@
 package main
 
 import (
+	"bytes"
 	"image"
 	"log"
 	"os"
 
+	"image/png"
 	_ "image/png"
 
 	"github.com/fogleman/gg"
@@ -121,6 +123,10 @@ func drawText(x int, y int, width int, height int, colour []float32) {
 	defer reader.Close()
 
 	image, _, err := image.Decode(reader)
+	var imgBuffer bytes.Buffer
+	png.Encode(&imgBuffer, image)
+
+	//img := base64.StdEncoding.EncodeToString(imgBuffer.Bytes())
 
 	vertices := []float32{
 		//Left triangle
@@ -133,6 +139,7 @@ func drawText(x int, y int, width int, height int, colour []float32) {
 		xEndPos, yEndPos, colour[0], colour[1], colour[2], colour[3], 1, 1, //Top right
 		xEndPos, yStartPos, colour[0], colour[1], colour[2], colour[3], 1, 0, //Bottom right
 	}
+	i := 0
 
 	var texture uint32
 	gl.GenTextures(1, &texture)
@@ -143,9 +150,9 @@ func drawText(x int, y int, width int, height int, colour []float32) {
 	gl.TextureParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
 	gl.TextureParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
 
-	gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, int32(_width), int32(_height), 0, gl.RGBA, gl.UNSIGNED_BYTE, gl.Ptr(image))
+	gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGB, int32(_width), int32(_height), 0, gl.RGB, gl.UNSIGNED_BYTE, gl.Ptr(imgBuffer.Bytes()))
 
 	vao := makeVAO(vertices)
 	gl.BindVertexArray(vao)
-	gl.DrawElements(gl.TRIANGLES, 6, gl.UNSIGNED_INT, gl.Ptr(0))
+	gl.DrawElements(gl.TRIANGLES, 6, gl.UNSIGNED_INT, gl.Ptr(&i))
 }

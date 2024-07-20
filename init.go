@@ -32,12 +32,12 @@ func InitOpenGL() uint32 {
 		panic(err)
 	}
 
-	frag, err := os.ReadFile("shaders/triangle.frag")
+	frag, err := os.ReadFile("shaders/text.frag")
 	if err != nil {
 		panic(err)
 	}
 
-	vert, err := os.ReadFile("shaders/triangle.vert")
+	vert, err := os.ReadFile("shaders/text.vert")
 	if err != nil {
 		panic(err)
 	}
